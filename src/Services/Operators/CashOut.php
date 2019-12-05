@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Daison\Paysera\Services\Operators;
 
 use Daison\Paysera\Services\CacheGlobals as Cache;
+use Daison\Paysera\Services\Math;
 use Daison\Paysera\Traits\ExchangeSetterTrait;
 use Daison\Paysera\Transformers\Collection;
 use DateTime;
@@ -39,7 +40,7 @@ class CashOut
     {
         $type = $this->collection->userType();
 
-        return $this->{'feeFor'.ucfirst($type)}();
+        return Math::add(0, $this->{'feeFor'.ucfirst($type)}(), 2);
     }
 
     /**
@@ -51,10 +52,9 @@ class CashOut
     {
         $amount = $this->analyzeNaturalAmount($this->collection);
 
-        return bcmul(
-            (string) $amount,
-            bcdiv(static::COMMISSION_FEE, '100', 30),
-            2
+        return Math::mul(
+            $amount,
+            Math::div(static::COMMISSION_FEE, '100')
         );
     }
 
@@ -74,10 +74,9 @@ class CashOut
             return 0;
         }
 
-        return bcmul(
+        return Math::mul(
             $this->collection->amount(),
-            bcdiv(static::COMMISSION_FEE, '100', 30),
-            2
+            Math::div(static::COMMISSION_FEE, 100)
         );
     }
 
@@ -88,7 +87,7 @@ class CashOut
      */
     public function analyzeNaturalAmount(Collection $collection)
     {
-        list($year, $week) = static::getYearAndWeek($collection);
+        list($year, $week) = static::getYearAndWeek($collection->date());
 
         $key = strtr('{year}-{week}-{user}', [
             '{year}' => $year,
@@ -102,29 +101,40 @@ class CashOut
 
         $allocated = $this->cache->get($key);
 
-        $abs = abs(bcadd((string) $allocated, (string) $collection->amount(), 2));
+        // we need to know the allocated + the collection's amount
+        // we will call it as our base value for now...
+        $basis = abs(Math::add($allocated, $collection->amount()));
 
+        // this condition, where we return 0, meaning that
+        // the purchases still under the free week quota
+        // thus, we shall return 0 instead.
         if (
-            $abs === static::NATURAL_FREE_PER_WEEK
-            || $abs < static::NATURAL_FREE_PER_WEEK
+            $basis === static::NATURAL_FREE_PER_WEEK
+            || $basis < static::NATURAL_FREE_PER_WEEK
         ) {
             $this->cache->put(
                 $key,
-                bcadd((string) $this->cache->get($key), (string) $collection->amount(), 2)
+                Math::add($this->cache->get($key), $collection->amount())
             );
 
-            return 0;
-        } elseif ($abs > static::NATURAL_FREE_PER_WEEK) {
-            $absolute = bcsub(static::NATURAL_FREE_PER_WEEK, (string) $allocated, 2);
-            $this->cache->put(
-                $key,
-                bcadd((string) $this->cache->get($key), (string) $absolute, 2)
-            );
-
-            return abs(bcsub((string) $collection->amount(), (string) $absolute, 2));
+            return '0.00';
         }
 
-        return (string) $collection->amount();
+        // this is where we determine if our basis is greater than
+        // the quota, thus, we need to pre-calculate the value that
+        // we need to deduct from the remaining quota it has
+        elseif ($basis > static::NATURAL_FREE_PER_WEEK) {
+            $remaining = Math::sub(static::NATURAL_FREE_PER_WEEK, $allocated);
+
+            $this->cache->put(
+                $key,
+                Math::add($this->cache->get($key), $remaining)
+            );
+
+            return abs(Math::sub($collection->amount(), $remaining));
+        }
+
+        return Math::add(0, $collection->amount());
     }
 
     /**
@@ -132,9 +142,9 @@ class CashOut
      *
      * @return array
      */
-    public static function getYearAndWeek(Collection $collection)
+    public static function getYearAndWeek(string $date)
     {
-        $date = new DateTime($collection->date());
+        $date = new DateTime($date);
 
         return [
             (int) $date->format('Y'),

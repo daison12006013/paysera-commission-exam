@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Daison\Paysera\Services\Operators;
 
+use Daison\Paysera\Services\Math;
 use Daison\Paysera\Traits\ExchangeSetterTrait;
 use Daison\Paysera\Transformers\Collection;
 
@@ -39,14 +40,14 @@ class CashIn
      */
     public function fee()
     {
-        $fee = bcmul(
+        $fee = Math::mul(
             $this->collection->amount(),
-            bcdiv(static::COMMISSION_FEE, '100', 30),
+            Math::div(static::COMMISSION_FEE, 100),
             2
         );
 
         if ($fee >= static::MAX_FEE) {
-            return bcadd(static::MAX_FEE, '0', 2);
+            return Math::add(static::MAX_FEE, 0, 2);
         }
 
         return $fee;

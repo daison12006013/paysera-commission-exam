@@ -32,6 +32,10 @@ class CurrencyExchange implements ShouldConvertCurrencies
             throw new Exception("We currently don't support [$currency] this type of currency.");
         }
 
-        return bcdiv((string) $value, static::EXCHANGE[$currency], 2);
+        return Math::div(
+            (string) $value,
+            static::EXCHANGE[$currency],
+            2
+        );
     }
 }
