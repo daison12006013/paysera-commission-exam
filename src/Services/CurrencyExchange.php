@@ -12,11 +12,20 @@ use Exception;
  */
 class CurrencyExchange implements ShouldConvertCurrencies
 {
-    const EXCHANGE = [
-        'EUR' => '1',
-        'USD' => '1.1497',
-        'JPY' => '129.53',
-    ];
+    /**
+     * Override this method if you want to use API to
+     * fetch latest exchange rate!
+     *
+     * @return array
+     */
+    public function getLatestExchange(): array
+    {
+        return [
+            'EUR' => '1',
+            'USD' => '1.1497',
+            'JPY' => '129.53',
+        ];
+    }
 
     /**
      * Undocumented function.
@@ -28,13 +37,15 @@ class CurrencyExchange implements ShouldConvertCurrencies
      */
     public function convert($currency, $value)
     {
-        if (!isset(static::EXCHANGE[$currency])) {
+        $latestExchange = $this->getLatestExchange();
+
+        if (!isset($latestExchange[$currency])) {
             throw new Exception("We currently don't support [$currency] this type of currency.");
         }
 
         return Math::div(
             (string) $value,
-            static::EXCHANGE[$currency],
+            $latestExchange[$currency],
             2
         );
     }
