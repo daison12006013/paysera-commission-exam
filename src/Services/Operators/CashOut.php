@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Daison\Paysera\Services\Operators;
 
 use Daison\Paysera\Services\CacheGlobals as Cache;
-use Daison\Paysera\Services\Traits\ExchangeSetterTrait;
+use Daison\Paysera\Traits\ExchangeSetterTrait;
+use Daison\Paysera\Transformers\Collection;
 use DateTime;
 
+/**
+ * @author Daison Carino <daison12006013@gmail.com>
+ */
 class CashOut
 {
     use ExchangeSetterTrait;
@@ -17,12 +21,20 @@ class CashOut
     const LEGAL_MINIMUM         = '0.5';
     const NATURAL_FREE_PER_WEEK = '1000';
 
-    public function __construct($collection)
+    /**
+     * Undocumented function.
+     */
+    public function __construct(Collection $collection)
     {
         $this->collection = $collection;
         $this->cache      = Cache::make();
     }
 
+    /**
+     * Undocumented function.
+     *
+     * @return string
+     */
     public function fee()
     {
         $type = $this->collection->userType();
@@ -30,6 +42,11 @@ class CashOut
         return $this->{'feeFor'.ucfirst($type)}();
     }
 
+    /**
+     * Undocumented function.
+     *
+     * @return string
+     */
     protected function feeForNatural()
     {
         $amount = $this->analyzeNaturalAmount($this->collection);
@@ -41,6 +58,11 @@ class CashOut
         );
     }
 
+    /**
+     * Undocumented function.
+     *
+     * @return string
+     */
     protected function feeForLegal()
     {
         $operationAmount = $this->exchange->convert(
@@ -59,14 +81,19 @@ class CashOut
         );
     }
 
-    public function analyzeNaturalAmount($c)
+    /**
+     * Undocumented function.
+     *
+     * @return string|float
+     */
+    public function analyzeNaturalAmount(Collection $collection)
     {
-        list($year, $week) = static::getYearAndWeek($c);
+        list($year, $week) = static::getYearAndWeek($collection);
 
         $key = strtr('{year}-{week}-{user}', [
             '{year}' => $year,
             '{week}' => $week,
-            '{user}' => $c->userId(),
+            '{user}' => $collection->userId(),
         ]);
 
         if (!$this->cache->has($key)) {
@@ -75,7 +102,7 @@ class CashOut
 
         $allocated = $this->cache->get($key);
 
-        $abs = abs($allocated + $c->amount());
+        $abs = abs(bcadd((string) $allocated, (string) $collection->amount(), 2));
 
         if (
             $abs === static::NATURAL_FREE_PER_WEEK
@@ -83,24 +110,29 @@ class CashOut
         ) {
             $this->cache->put(
                 $key,
-                $this->cache->get($key) + $c->amount()
+                bcadd((string) $this->cache->get($key), (string) $collection->amount(), 2)
             );
 
             return 0;
         } elseif ($abs > static::NATURAL_FREE_PER_WEEK) {
-            $absolute = static::NATURAL_FREE_PER_WEEK - $allocated;
+            $absolute = bcsub(static::NATURAL_FREE_PER_WEEK, (string) $allocated, 2);
             $this->cache->put(
                 $key,
-                $this->cache->get($key) + $absolute
+                bcadd((string) $this->cache->get($key), (string) $absolute, 2)
             );
 
-            return abs($c->amount() - $absolute);
+            return abs(bcsub((string) $collection->amount(), (string) $absolute, 2));
         }
 
-        return $c->amount();
+        return (string) $collection->amount();
     }
 
-    public static function getYearAndWeek($collection)
+    /**
+     * Undocumented function.
+     *
+     * @return array
+     */
+    public static function getYearAndWeek(Collection $collection)
     {
         $date = new DateTime($collection->date());
 

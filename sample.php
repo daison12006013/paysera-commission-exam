@@ -1,24 +1,8 @@
 <?php
 
-use Daison\Paysera\Manager;
-use Daison\Paysera\Parsers\Csv;
-use Daison\Paysera\Services\Commission;
-use Daison\Paysera\Services\CurrencyExchange;
+require __DIR__ . '/bootstrap.php';
 
-require __DIR__ . '/vendor/autoload.php';
-
-$exchange = new CurrencyExchange();
-
-$commission = new Commission();
-$commission->setCurrencyExchange($exchange);
-
-$parser = new Csv();
-$parser->setPath(__DIR__ . '/tests/input.csv')->parse();
-
-$collections = Manager::make()
-    ->setCommission($commission)
-    ->setParser($parser)
-    ->handle();
+// ------------------------------------------------------------
 
 $table = new LucidFrame\Console\ConsoleTable();
 $table
@@ -44,3 +28,5 @@ foreach ($collections as $collection) {
 }
 
 $table->display();
+
+echo sprintf("> Speed: %s\n", microtime(true) - DAISON_PERSERA_START);

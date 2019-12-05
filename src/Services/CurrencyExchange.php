@@ -7,6 +7,9 @@ namespace Daison\Paysera\Services;
 use Daison\Paysera\Contracts\ShouldConvertCurrencies;
 use Exception;
 
+/**
+ * @author Daison Carino <daison12006013@gmail.com>
+ */
 class CurrencyExchange implements ShouldConvertCurrencies
 {
     const EXCHANGE = [
@@ -15,7 +18,15 @@ class CurrencyExchange implements ShouldConvertCurrencies
         'JPY' => '129.53',
     ];
 
-    public function convert($currency, $value): string
+    /**
+     * Undocumented function.
+     *
+     * @param string $currency
+     * @param mixed  $value
+     *
+     * @return string
+     */
+    public function convert($currency, $value)
     {
         if (!isset(static::EXCHANGE[$currency])) {
             throw new Exception("We currently don't support [$currency] this type of currency.");
