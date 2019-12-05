@@ -1,8 +1,8 @@
 <?php
 
-namespace Daison\Paysera;
+declare(strict_types=1);
 
-use Daison\Paysera\Transformers\MultipleCollection;
+namespace Daison\Paysera;
 
 abstract class CommonData
 {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Daison\Paysera\Transformers;
 
 class Collection
@@ -15,6 +17,8 @@ class Collection
         'currency'      => 5,
     ];
 
+    protected $values = [];
+
     public function __construct(array $record)
     {
         $this->record = $record;
@@ -27,17 +31,15 @@ class Collection
         }
     }
 
-    public function setRawFee($rawFee)
+    public function setValue($key, $value)
     {
-        $this->rawFee = $rawFee;
+        $this->values[$key] = $value;
 
         return $this;
     }
 
-    public function setFinalFee($finalFee)
+    public function getValue($key)
     {
-        $this->finalFee = $finalFee;
-
-        return $this;
+        return $this->values[$key];
     }
 }

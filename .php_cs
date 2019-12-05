@@ -16,6 +16,14 @@ return PhpCsFixer\Config::create()
         'strict_param' => true,
         'declare_strict_types' => true,
         'yoda_style' => false,
+        'binary_operator_spaces' => [
+            'default' => 'single_space',
+            'operators' => [
+                '=' => 'align',
+                '=>' => 'align',
+            ],
+        ],
+        'trailing_comma_in_multiline_array' => true,
     ])
     ->setFinder($finder)
     ->setUsingCache(false)

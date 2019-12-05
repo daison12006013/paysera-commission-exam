@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Daison\Paysera\Services\Traits;
 
 use Daison\Paysera\Contracts\ShouldConvertCurrencies;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Daison\Paysera\Services;
 
 use Daison\Paysera\Contracts\ShouldComputeCommissions;
@@ -22,14 +24,11 @@ class Commission implements ShouldComputeCommissions
         $operator->setCurrencyExchange($this->exchange);
         $amount = $operator->fee();
 
-        $collection->setRawFee($amount);
-
-        $convertedAmount = $this->exchange->convert(
+        $collection->setValue('rawFee', $amount);
+        $collection->setValue('convertedFee', $this->exchange->convert(
             $collection->currency(),
             $amount
-        );
-
-        $collection->setFinalFee($convertedAmount);
+        ));
 
         return $amount;
     }

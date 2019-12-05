@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Daison\Paysera\Services\Operators;
 
 use Daison\Paysera\Services\CacheGlobals as Cache;
@@ -10,10 +12,10 @@ class CashOut
 {
     use ExchangeSetterTrait;
 
-    const COMMISSION_FEE        = 0.3;
-    const MAX_FEE               = 5.00;
-    const LEGAL_MINIMUM         = 0.5;
-    const NATURAL_FREE_PER_WEEK = 1000;
+    const COMMISSION_FEE        = '0.3';
+    const MAX_FEE               = '5.00';
+    const LEGAL_MINIMUM         = '0.5';
+    const NATURAL_FREE_PER_WEEK = '1000';
 
     public function __construct($collection)
     {
@@ -25,16 +27,16 @@ class CashOut
     {
         $type = $this->collection->userType();
 
-        return $this->{'feeFor' . ucfirst($type)}();
+        return $this->{'feeFor'.ucfirst($type)}();
     }
 
     protected function feeForNatural()
     {
-        $amount = $this->getNaturalAmount($this->collection);
+        $amount = $this->analyzeNaturalAmount($this->collection);
 
         return bcmul(
-            $amount,
-            bcdiv(static::COMMISSION_FEE, 100, 30),
+            (string) $amount,
+            bcdiv(static::COMMISSION_FEE, '100', 30),
             2
         );
     }
@@ -52,12 +54,12 @@ class CashOut
 
         return bcmul(
             $this->collection->amount(),
-            bcdiv(static::COMMISSION_FEE, 100, 30),
+            bcdiv(static::COMMISSION_FEE, '100', 30),
             2
         );
     }
 
-    public function getNaturalAmount($c)
+    public function analyzeNaturalAmount($c)
     {
         list($year, $week) = static::getYearAndWeek($c);
 
@@ -76,7 +78,7 @@ class CashOut
         $abs = abs($allocated + $c->amount());
 
         if (
-            $abs == static::NATURAL_FREE_PER_WEEK
+            $abs === static::NATURAL_FREE_PER_WEEK
             || $abs < static::NATURAL_FREE_PER_WEEK
         ) {
             $this->cache->put(
@@ -85,9 +87,7 @@ class CashOut
             );
 
             return 0;
-        }
-
-        elseif ($abs > static::NATURAL_FREE_PER_WEEK) {
+        } elseif ($abs > static::NATURAL_FREE_PER_WEEK) {
             $absolute = static::NATURAL_FREE_PER_WEEK - $allocated;
             $this->cache->put(
                 $key,

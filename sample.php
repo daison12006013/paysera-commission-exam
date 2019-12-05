@@ -13,7 +13,7 @@ $commission = new Commission();
 $commission->setCurrencyExchange($exchange);
 
 $parser = new Csv();
-$parser->setPath(__DIR__ . '/tests/input.csv');
+$parser->setPath(__DIR__ . '/tests/input.csv')->parse();
 
 $collections = Manager::make()
     ->setCommission($commission)
@@ -39,8 +39,8 @@ foreach ($collections as $collection) {
         ->addColumn($collection->operationType())
         ->addColumn($collection->amount())
         ->addColumn($collection->currency())
-        ->addColumn($collection->rawFee)
-        ->addColumn($collection->finalFee);
+        ->addColumn($collection->getValue('rawFee'))
+        ->addColumn($collection->getValue('convertedFee'));
 }
 
 $table->display();

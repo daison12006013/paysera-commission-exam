@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Daison\Paysera\Parsers;
 
 use Daison\Paysera\CommonData;
@@ -7,20 +9,20 @@ use Daison\Paysera\Transformers\Collection;
 
 class Csv extends CommonData
 {
+    protected $collections = [];
+
     public function collections(): array
     {
-        return $this->parse();
+        return $this->collections;
     }
 
-    protected function parse()
+    public function parse()
     {
-        $ret = [];
-
         foreach ($this->getRecords() as $record) {
-            $ret[] = new Collection($record);
+            $this->collections[] = new Collection($record);
         }
 
-        return $ret;
+        return $this;
     }
 
     protected function getRecords()

@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace Daison\Paysera;
 
@@ -33,14 +33,10 @@ class Manager
 
     public function handle()
     {
-        $recollections = [];
-
         foreach ($this->parsed->collections() as $collection) {
-            $fee = $this->commission->compute($collection);
-
-            $recollections[] = $collection;
+            $this->commission->compute($collection);
         }
 
-        return $recollections;
+        return $this->parsed->collections();
     }
 }

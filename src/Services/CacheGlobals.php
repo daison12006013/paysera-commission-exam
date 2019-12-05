@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Daison\Paysera\Services;
 
 use Daison\Paysera\Contracts\ShouldCacheable;
