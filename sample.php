@@ -29,4 +29,4 @@ foreach ($collections as $collection) {
 
 $table->display();
 
-echo sprintf("> Speed: %s\n", microtime(true) - DAISON_PERSERA_START);
+echo sprintf("> Speed: %s\n", microtime(true) - DAISON_PAYSERA_START);

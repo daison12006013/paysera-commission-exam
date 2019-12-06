@@ -1,6 +1,6 @@
 <?php
 
-define('DAISON_PERSERA_START', microtime(true));
+define('DAISON_PAYSERA_START', microtime(true));
 
 use Daison\Paysera\Application;
 use Daison\Paysera\Parsers\Csv;
