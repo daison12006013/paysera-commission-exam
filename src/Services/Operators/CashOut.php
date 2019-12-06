@@ -108,13 +108,13 @@ class CashOut
         // this condition, where we return 0, meaning that
         // the purchases still under the free week quota
         // thus, we shall return 0 instead.
-        if (
-            $basis >= static::NATURAL_FREE_PER_WEEK && $basis <= static::NATURAL_FREE_PER_WEEK
-            || $basis < static::NATURAL_FREE_PER_WEEK
-        ) {
+        if ($this->isCashOutFreeWeek($basis)) {
             $this->cache->put(
                 $key,
-                Math::add($this->cache->get($key), $collection->amount())
+                Math::add(
+                    $this->cache->get($key),
+                    $collection->amount()
+                )
             );
 
             return '0.00';
@@ -123,7 +123,10 @@ class CashOut
         // this is where we determine if our basis is greater than
         // the quota, thus, we need to pre-calculate the value that
         // we need to deduct from the remaining quota it has
-        $remaining = Math::sub(static::NATURAL_FREE_PER_WEEK, $allocated);
+        $remaining = Math::sub(
+            static::NATURAL_FREE_PER_WEEK,
+            $allocated
+        );
 
         $this->cache->put(
             $key,
@@ -146,5 +149,33 @@ class CashOut
             (int) $date->format('Y'),
             (int) $date->format('W'),
         ];
+    }
+
+    /**
+     * Determine if still free commission fee.
+     *
+     * @param string|float $basis
+     *
+     * @return bool
+     */
+    public function isCashOutFreeWeek($basis)
+    {
+        // instead of using literal equal, we could use range
+        // to hack the equally equal even having decimal places
+        // 300 == 300.0000000
+        if (
+            $basis >= static::NATURAL_FREE_PER_WEEK &&
+            $basis <= static::NATURAL_FREE_PER_WEEK
+        ) {
+            return true;
+        }
+
+        // if basis is still lower than the natural
+        // free per week
+        if ($basis < static::NATURAL_FREE_PER_WEEK) {
+            return true;
+        }
+
+        return false;
     }
 }
