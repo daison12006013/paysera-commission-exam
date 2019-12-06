@@ -8,10 +8,6 @@ use Daison\Paysera\Services\Operators\CashIn;
 
 class CashInTest extends TestCase
 {
-    public function setUp()
-    {
-    }
-
     public function testNormalFee()
     {
         $instance = new CashIn(new Collection([

@@ -15,8 +15,6 @@ class CurrencyExchange implements ShouldConvertCurrencies
     /**
      * Override this method if you want to use API to
      * fetch latest exchange rate!
-     *
-     * @return array
      */
     public function getLatestExchange(): array
     {
