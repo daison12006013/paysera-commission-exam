@@ -26,6 +26,6 @@ install:
   - composer install
 
 script:
-  - ./phpunit --coverage
+  - ./phpunit --coverage-html coverage/html --coverage-xml coverage/xml --coverage-clover coverage/clover.xml
   - php sample.php
 
