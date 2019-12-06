@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Daison\Paysera\Parsers;
 
 use Daison\Paysera\Contracts\ShouldProvideCollection;
+use Daison\Paysera\Transformers\Collection;
 
 /**
  * @author Daison Carino <daison12006013@gmail.com>

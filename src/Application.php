@@ -11,8 +11,8 @@ use Daison\Paysera\Services\CurrencyExchange;
 use Daison\Paysera\Traits\MakeableTrait;
 
 /**
- * This is the application or other developers calls it as a Manager
- * where it lives all the bootstrap processes.
+ * This is the application or other developers call it as a Manager
+ * where it bootstraps the services.
  *
  * @author Daison Carino <daison12006013@gmail.com>
  */
