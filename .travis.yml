@@ -1,0 +1,31 @@
+language: php
+
+matrix:
+  fast_finish: true
+  include:
+    # - php: 7.2
+    - php: 7.3
+    # - php: 7.4
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - |
+      echo > $HOME/.phpenv/versions/$TRAVIS_PHP_VERSION/etc/conf.d/xdebug.ini
+      git clone --single-branch --branch=v1.0.6 --depth=1 https://github.com/krakjoe/pcov
+      cd pcov
+      phpize
+      ./configure
+      make clean install
+      echo "extension=pcov.so" > $HOME/.phpenv/versions/$TRAVIS_PHP_VERSION/etc/conf.d/pcov.ini
+      cd $TRAVIS_BUILD_DIR
+
+install:
+  - composer install
+
+script:
+  - ./phpunit --coverage
+  - php sample.php
+
