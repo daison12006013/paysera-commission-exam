@@ -103,13 +103,13 @@ class CashOut
 
         // we need to know the allocated + the collection's amount
         // we will call it as our base value for now...
-        $basis = abs(Math::add($allocated, $collection->amount()));
+        $basis = Math::add($allocated, $collection->amount());
 
         // this condition, where we return 0, meaning that
         // the purchases still under the free week quota
         // thus, we shall return 0 instead.
         if (
-            $basis === static::NATURAL_FREE_PER_WEEK
+            $basis >= static::NATURAL_FREE_PER_WEEK && $basis <= static::NATURAL_FREE_PER_WEEK
             || $basis < static::NATURAL_FREE_PER_WEEK
         ) {
             $this->cache->put(
@@ -123,18 +123,14 @@ class CashOut
         // this is where we determine if our basis is greater than
         // the quota, thus, we need to pre-calculate the value that
         // we need to deduct from the remaining quota it has
-        elseif ($basis > static::NATURAL_FREE_PER_WEEK) {
-            $remaining = Math::sub(static::NATURAL_FREE_PER_WEEK, $allocated);
+        $remaining = Math::sub(static::NATURAL_FREE_PER_WEEK, $allocated);
 
-            $this->cache->put(
-                $key,
-                Math::add($this->cache->get($key), $remaining)
-            );
+        $this->cache->put(
+            $key,
+            Math::add($this->cache->get($key), $remaining)
+        );
 
-            return abs(Math::sub($collection->amount(), $remaining));
-        }
-
-        return Math::add(0, $collection->amount());
+        return abs(Math::sub($collection->amount(), $remaining));
     }
 
     /**
