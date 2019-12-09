@@ -4,6 +4,7 @@ namespace Daison\Paysera\Tests\Services;
 
 use Daison\Paysera\Services\CurrencyExchange;
 use PHPUnit\Framework\TestCase;
+use Daison\Paysera\Services\Math;
 
 class CurrencyExchangeTest extends TestCase
 {
@@ -14,12 +15,12 @@ class CurrencyExchangeTest extends TestCase
 
     public function testScenario()
     {
-        $this->assertEquals($this->exchange->convert('EUR', 1), 1);
-        $this->assertEquals($this->exchange->convert('JPY', 129.53), 1);
-        $this->assertEquals($this->exchange->convert('USD', 1.1497), 1);
+        $this->assertEquals(Math::roundUp($this->exchange->convert('EUR', 1)), 1);
+        $this->assertEquals(Math::roundUp($this->exchange->convert('JPY', 129.53)), 1);
+        $this->assertEquals(Math::roundUp($this->exchange->convert('USD', 1.1497)), 1);
 
-        $this->assertEquals($this->exchange->convert('JPY', 100), 0.77);
-        $this->assertEquals($this->exchange->convert('USD', 100), 86.97);
+        $this->assertEquals(Math::roundUp($this->exchange->convert('JPY', 100)), 0.78);
+        $this->assertEquals(Math::roundUp($this->exchange->convert('USD', 100)), 86.98);
     }
 
     public function testUnsupportedCurrency()

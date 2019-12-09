@@ -12,7 +12,7 @@ class ApplicationTest extends TestCase
     public function testBootstrap()
     {
         $collections = Application::make() // or: Manager::getInstance()
-            ->setData(new Csv(__DIR__ . '/input.csv'))
+            ->setData(new Csv(__DIR__ . '/input1.csv'))
             ->handle();
 
         $this->assertTrue(is_array($collections));

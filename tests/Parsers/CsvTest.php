@@ -11,7 +11,7 @@ class CsvTest extends TestCase
 {
     public function testCsvCollection()
     {
-        $arr = new Csv(__DIR__.'/../input.csv');
+        $arr = new Csv(__DIR__.'/../input1.csv');
 
         $collections = $arr->collections();
 
