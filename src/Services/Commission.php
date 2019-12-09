@@ -28,6 +28,18 @@ class Commission implements ShouldComputeCommissions
     /**
      * Undocumented function.
      *
+     * @return self
+     */
+    public function setOperators(array $operators = [])
+    {
+        $this->operators = $operators;
+
+        return $this;
+    }
+
+    /**
+     * Undocumented function.
+     *
      * @return string|float
      */
     public function compute(Collection $collection)
@@ -38,10 +50,11 @@ class Commission implements ShouldComputeCommissions
         $amount = $operator->fee();
 
         $collection->setValue('rawFee', $amount);
-        $collection->setValue('convertedFee', $this->exchange->convert(
+        $collection->setValue('roundUpFee', Math::roundUp($amount));
+        $collection->setValue('convertedFee', Math::roundUp($this->exchange->convert(
             $collection->currency(),
             $amount
-        ));
+        )));
 
         return $amount;
     }

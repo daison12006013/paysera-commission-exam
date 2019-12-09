@@ -57,4 +57,19 @@ class Math
     {
         return bcdiv((string) $num1, (string) $num2, $precision);
     }
+
+    /**
+     * Undocumented function.
+     *
+     * @param string|float $number
+     *
+     * @return string}float
+     */
+    public static function roundUp($number, int $precision = 2)
+    {
+        return number_format(
+            ceil($number * pow(10, $precision)) / pow(10, $precision),
+            2
+        );
+    }
 }

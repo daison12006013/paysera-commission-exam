@@ -15,7 +15,7 @@ class CashIn
 {
     use ExchangeSetterTrait;
 
-    const COMMISSION_FEE = '0.3';
+    const COMMISSION_FEE = '0.03';
     const MAX_FEE        = '5.00';
 
     /**
@@ -40,14 +40,18 @@ class CashIn
      */
     public function fee()
     {
+        $amount = $this->exchange->convert(
+            $this->collection->currency(),
+            $this->collection->amount()
+        );
+
         $fee = Math::mul(
-            $this->collection->amount(),
-            Math::div(static::COMMISSION_FEE, 100),
-            2
+            $amount,
+            Math::div(static::COMMISSION_FEE, 100)
         );
 
         if ($fee >= static::MAX_FEE) {
-            return Math::add(static::MAX_FEE, 0, 2);
+            $fee = Math::add(static::MAX_FEE, 0);
         }
 
         return $fee;

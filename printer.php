@@ -1,9 +1,5 @@
 <?php
 
-require __DIR__ . '/bootstrap.php';
-
-// ------------------------------------------------------------
-
 $table = new LucidFrame\Console\ConsoleTable();
 $table
     ->addHeader('Date')
@@ -12,8 +8,9 @@ $table
     ->addHeader('Operation Type')
     ->addHeader('Amount')
     ->addHeader('Currency')
-    ->addHeader('Raw Fee')
-    ->addHeader('Converted Fee in (EUR)');
+    ->addHeader('Fee')
+    ->addHeader('Fee (Rounded Up)')
+    ->addHeader('Fee (Converted in EUR)');
 
 foreach ($collections as $collection) {
     $table->addRow()
@@ -24,6 +21,7 @@ foreach ($collections as $collection) {
         ->addColumn($collection->amount())
         ->addColumn($collection->currency())
         ->addColumn($collection->getValue('rawFee'))
+        ->addColumn($collection->getValue('roundUpFee'))
         ->addColumn($collection->getValue('convertedFee'));
 }
 

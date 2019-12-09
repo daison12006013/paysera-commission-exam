@@ -16,13 +16,19 @@ class CurrencyExchange implements ShouldConvertCurrencies
      * Override this method if you want to use API to
      * fetch latest exchange rate!
      */
-    public function getLatestExchange(): array
+    public function getLatestExchange(string $currency): array
     {
-        return [
+        $exchange = [
             'EUR' => '1',
             'USD' => '1.1497',
             'JPY' => '129.53',
         ];
+
+        if (!isset($exchange[$currency])) {
+            throw new Exception("We currently don't support [$currency] this type of currency.");
+        }
+
+        return $exchange;
     }
 
     /**
@@ -35,16 +41,21 @@ class CurrencyExchange implements ShouldConvertCurrencies
      */
     public function convert($currency, $value)
     {
-        $latestExchange = $this->getLatestExchange();
-
-        if (!isset($latestExchange[$currency])) {
-            throw new Exception("We currently don't support [$currency] this type of currency.");
-        }
+        $latestExchange = $this->getLatestExchange($currency);
 
         return Math::div(
             (string) $value,
-            $latestExchange[$currency],
-            2
+            $latestExchange[$currency]
+        );
+    }
+
+    public function convertBack($currency, $value)
+    {
+        $latestExchange = $this->getLatestExchange($currency);
+
+        return Math::mul(
+            (string) $value,
+            $latestExchange[$currency]
         );
     }
 }

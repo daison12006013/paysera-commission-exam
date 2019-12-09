@@ -24,6 +24,11 @@ class CollectionTest extends TestCase
         $this->collection->setValue($k = 'myKey', $v = '1234qwerASDF!@#$');
 
         $this->assertEquals($this->collection->getValue($k), $v);
+
+        $this->assertEquals(
+            $this->collection->getValue('yourKey'),
+            null
+        );
     }
 
     public function testMagicMethodCall()

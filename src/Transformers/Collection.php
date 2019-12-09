@@ -83,6 +83,10 @@ class Collection
      */
     public function getValue($key)
     {
+        if (!isset($this->values[$key])) {
+            return null;
+        }
+
         return $this->values[$key];
     }
 }
