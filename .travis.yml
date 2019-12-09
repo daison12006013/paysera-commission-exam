@@ -27,5 +27,6 @@ install:
 
 script:
   - ./phpunit --coverage-html coverage/html --coverage-xml coverage/xml --coverage-clover coverage/clover.xml
-  - php sample.php
+  - php part1.php
+  - php part2.php
 
