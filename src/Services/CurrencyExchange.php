@@ -28,7 +28,7 @@ class CurrencyExchange implements ShouldConvertCurrencies
             throw new Exception("We currently don't support [$currency] this type of currency.");
         }
 
-        return $exchange;
+        return $exchange[$currency];
     }
 
     /**
@@ -45,7 +45,7 @@ class CurrencyExchange implements ShouldConvertCurrencies
 
         return Math::div(
             (string) $value,
-            $latestExchange[$currency]
+            $latestExchange
         );
     }
 
@@ -55,7 +55,7 @@ class CurrencyExchange implements ShouldConvertCurrencies
 
         return Math::mul(
             (string) $value,
-            $latestExchange[$currency]
+            $latestExchange
         );
     }
 }
