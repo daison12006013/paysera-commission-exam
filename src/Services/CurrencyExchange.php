@@ -16,7 +16,7 @@ class CurrencyExchange implements ShouldConvertCurrencies
      * Override this method if you want to use API to
      * fetch latest exchange rate!
      */
-    public function getLatestExchange(string $currency): array
+    public function getLatestExchange(string $currency)
     {
         $exchange = [
             'EUR' => '1',
