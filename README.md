@@ -1,4 +1,4 @@
-# Emapta Test
+# Paysera Commission Exam / Test
 
 [![Build Status](https://travis-ci.org/daison12006013/emapta-test.svg?branch=master)](https://travis-ci.org/daison12006013/emapta-test)
 
