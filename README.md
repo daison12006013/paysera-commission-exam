@@ -1,6 +1,6 @@
 # Paysera Commission Exam / Test
 
-[![Build Status](https://travis-ci.org/daison12006013/emapta-test.svg?branch=master)](https://travis-ci.org/daison12006013/emapta-test)
+[![Build Status](https://travis-ci.org/daison12006013/paysera-commission-exam.svg?branch=master)](https://travis-ci.org/daison12006013/paysera-commission-exam)
 
 ### Via Command Line
 
